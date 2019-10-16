@@ -14,8 +14,29 @@ app.use(express.urlencoded({extended: false}));
 
 app.set('view engine', 'hbs');
 
+
+
 app.get('/', (req, res) => {
-    const reviews = Review.find({}, (err, reviews, count) => {
+
+    const semesterQ = req.query.semesterQ;
+    const yearQ = req.query.yearQ;
+    const professorQ = req.query.professorQ;
+
+    const findObj = {};
+    if(semesterQ) {
+        findObj.semester = semesterQ;
+        console.log(findObj);
+    }
+    if(yearQ) {
+        findObj.year = yearQ;
+        console.log(findObj);
+    }
+    if(professorQ) {
+        findObj.professor = professorQ;
+        console.log(findObj);
+    }
+
+    const reviews = Review.find(findObj, (err, reviews, count) => {
         res.render('index', {reviews: reviews});
     });
 });

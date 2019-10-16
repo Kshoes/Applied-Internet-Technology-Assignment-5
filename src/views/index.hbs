@@ -1,3 +1,12 @@
+
+Search:
+<form action="/" method="GET">
+    semester: <input type="texxt" name="semesterQ" value="">
+    year: <input type="number" name="yearQ" value="">
+    professor: <input type="text" name="professorQ" value="">
+    <input type="submit" name="" value="search">
+</form>
+
 These are the course reviews:
 <table>
     <tr>
@@ -20,9 +29,14 @@ These are the course reviews:
     {{!-- <div>{{courseName}}, {{courseNumber}}, {{semester}}, year, {{professor}}, {{review}}</div> --}}
     {{/each}}
 </table>
+
+
+
 {{!-- <form method="POST" action="/add">
-    <input type="submit"> --}}
-</form> 
+    <input type="submit">
+</form>  --}}
+
+
 
 {{!-- 
 db.createUser(
