@@ -10,13 +10,11 @@ const ReviewSchema = new mongoose.Schema({
     year: Number,
     professor: String,
     review: String
-})
+});
 
 mongoose.model('Review', ReviewSchema);
 
 const Review = mongoose.model('Review');
-
-
 
 // is the environment variable, NODE_ENV, set to PRODUCTION? 
 let dbconf;

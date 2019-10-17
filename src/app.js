@@ -2,7 +2,7 @@
 
 const express = require('express');
 const app = express();
-const db = require('./db.js');
+require('./db.js');
 const mongoose = require('mongoose');
 const Review = mongoose.model('Review');
 const path = require('path');
@@ -43,7 +43,7 @@ app.use((req, res, next) => {
     // console.log(req.session);
     console.log('The Cookie header contains: ' + req.get('Cookie'));
     next();
-})
+});
 
 
 
@@ -67,7 +67,7 @@ app.get('/', (req, res) => {
         queryObj.professor = professorQ;
         console.log(queryObj);
     }
-    Review.find(queryObj, (err, reviews, count) => {
+    Review.find(queryObj, (err, reviews) => {
         if(err) {
             throw err;
         }
@@ -90,7 +90,10 @@ app.post('/reviews/add', (req, res) => {
         professor: req.body.professor,
         review: req.body.review
     });
-    newReview.save((err, reviews, count) => {
+    newReview.save((err) => {
+        if(err) {
+            throw err;
+        }
         if(req.session.added) {
             req.session.added.push(newReview);
         }
@@ -104,7 +107,7 @@ app.post('/reviews/add', (req, res) => {
 
 app.get('/reviews/mine', (req, res) => {
     res.render('mine', {added: req.session.added});
-})
+});
 
 
 
