@@ -22,26 +22,41 @@ app.get('/', (req, res) => {
     const yearQ = req.query.yearQ;
     const professorQ = req.query.professorQ;
 
-    const findObj = {};
+    const queryObj = {};
     if(semesterQ) {
-        findObj.semester = semesterQ;
-        console.log(findObj);
+        queryObj.semester = semesterQ;
+        console.log(queryObj);
     }
     if(yearQ) {
-        findObj.year = yearQ;
-        console.log(findObj);
+        queryObj.year = yearQ;
+        console.log(queryObj);
     }
     if(professorQ) {
-        findObj.professor = professorQ;
-        console.log(findObj);
+        queryObj.professor = professorQ;
+        console.log(queryObj);
     }
 
-    const reviews = Review.find(findObj, (err, reviews, count) => {
+    const reviews = Review.find(queryObj, (err, reviews, count) => {
         res.render('index', {reviews: reviews});
     });
 });
 
+app.get('/reviews/add', (req, res) => {
+    res.render('add');
+});
 
+app.post('/reviews/add', (req, res) => {
+    new Review({
+        courseNumber: req.body.courseNumber,
+        courseName: req.body.courseName,
+        semester: req.body.semester,
+        year: req.body.year,
+        professor: req.body.professor,
+        review: req.body.review
+    }).save((err, reviews, count) =>{
+        res.redirect('/');
+    });
+});
 
 
 
