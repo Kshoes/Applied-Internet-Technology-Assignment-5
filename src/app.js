@@ -12,8 +12,38 @@ const publicPath = path.resolve(__dirname, 'public');
 app.use(express.static(publicPath));
 app.use(express.urlencoded({extended: false}));
 
-app.set('view engine', 'hbs');
+const session = require('express-session');
+const sessionOptions = { 
+	secret: 'secret for signing session id', 
+	saveUninitialized: false, 
+	resave: false 
+};
+app.use(session(sessionOptions));
 
+app.use((req, res, next) => {
+    res.locals.pageCount = req.session.pageCount;
+    console.log(req.session.pageCount);
+    console.log(res.locals.pageCount);
+    if(req.session.pageCount === undefined) {
+        req.session.pageCount = 0;
+    }
+
+    req.session.pageCount++;
+    res.locals.pageCount = req.session.pageCount;
+
+        console.log(req.session.pageCount);
+        console.log(res.locals.pageCount);
+
+    next();
+});
+
+app.use((req, res, next) => {
+
+    console.log('The Cookie header contains: ' + req.get('Cookie'));
+    next();
+})
+
+app.set('view engine', 'hbs');
 
 
 app.get('/', (req, res) => {
@@ -35,9 +65,13 @@ app.get('/', (req, res) => {
         queryObj.professor = professorQ;
         console.log(queryObj);
     }
-
-    const reviews = Review.find(queryObj, (err, reviews, count) => {
-        res.render('index', {reviews: reviews});
+    Review.find(queryObj, (err, reviews, count) => {
+        if(err) {
+            throw err;
+        }
+        else {
+            res.render('index', {reviews: reviews});
+        }
     });
 });
 
