@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 const Review = mongoose.model('Review');
 const path = require('path');
 
+app.set('view engine', 'hbs');
+
 const publicPath = path.resolve(__dirname, 'public');
 
 app.use(express.static(publicPath));
@@ -22,8 +24,8 @@ app.use(session(sessionOptions));
 
 app.use((req, res, next) => {
     res.locals.pageCount = req.session.pageCount;
-    console.log(req.session.pageCount);
-    console.log(res.locals.pageCount);
+    // console.log(req.session.pageCount);
+    // console.log(res.locals.pageCount);
     if(req.session.pageCount === undefined) {
         req.session.pageCount = 0;
     }
@@ -31,19 +33,19 @@ app.use((req, res, next) => {
     req.session.pageCount++;
     res.locals.pageCount = req.session.pageCount;
 
-        console.log(req.session.pageCount);
-        console.log(res.locals.pageCount);
+    // console.log(req.session.pageCount);
+    // console.log(res.locals.pageCount);
 
     next();
 });
 
 app.use((req, res, next) => {
-
+    // console.log(req.session);
     console.log('The Cookie header contains: ' + req.get('Cookie'));
     next();
 })
 
-app.set('view engine', 'hbs');
+
 
 
 app.get('/', (req, res) => {
@@ -80,17 +82,29 @@ app.get('/reviews/add', (req, res) => {
 });
 
 app.post('/reviews/add', (req, res) => {
-    new Review({
+    const newReview = new Review({
         courseNumber: req.body.courseNumber,
         courseName: req.body.courseName,
         semester: req.body.semester,
         year: req.body.year,
         professor: req.body.professor,
         review: req.body.review
-    }).save((err, reviews, count) =>{
+    });
+    newReview.save((err, reviews, count) => {
+        if(req.session.added) {
+            req.session.added.push(newReview);
+        }
+        else {
+            req.session.added = [];
+            req.session.added.push(newReview);
+        }
         res.redirect('/');
     });
 });
+
+app.get('/reviews/mine', (req, res) => {
+    res.render('mine', {added: req.session.added});
+})
 
 
 
